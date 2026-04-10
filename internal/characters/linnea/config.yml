@@ -1,0 +1,54 @@
+package_name: linnea
+genshin_id: 10000130
+key: linnea
+action_param_keys:
+    attack:
+        - param: "travel"
+    aim:
+        - param: "hold"
+        - param: "travel"
+        - param: "weakspot"
+    skill:
+      - param: "recast"
+skill_data_mapping:
+  attack:
+    attack_1:
+      - 0
+    attack_2:
+      - 1
+    attack_3:
+      - 3
+    aim:
+      - 3
+    collision:
+      - 4
+    lowPlunge:
+      - 5
+    highPlunge:
+      - 6
+  skill:
+    skillTurret:
+      - 0
+    skillTurretLunar:
+      - 1
+    skillBig:
+      - 2
+    skillDuration:
+      - 3
+    skillCooldown:
+      - 4
+  burst:
+    burstHealBigAdditive:
+      - 0
+    burstHealBig:
+      - 1
+    burstHealContinuousAdditive:
+      - 2
+    burstHealContinuous:
+      - 3
+    burstDuration:
+      - 4
+    burstCooldown:
+      - 5
+    burstEnergyCost:
+      - 6

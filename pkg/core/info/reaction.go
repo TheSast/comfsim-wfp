@@ -68,6 +68,7 @@ type Reactable interface {
 	ReactableSwirl
 	ReactableVaporize
 	ReactableLunarCharged
+	ReactableLunarCrystallize
 }
 
 type ReactableBloom interface {
@@ -136,5 +137,5 @@ type ReactableLunarCharged interface {
 
 type ReactableLunarCrystallize interface {
 	TryLunarCrystallize(a *AttackEvent) bool
-	DoLCrAttack()
+	DoLCrAttack(owner int)
 }

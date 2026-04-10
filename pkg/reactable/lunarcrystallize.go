@@ -124,6 +124,14 @@ type lcrContribution = struct {
 	em      float64
 }
 
+// perform a lunarCrystallize where everyone contributes
+func (r *Reactable) DoTeamLCrAttack(owner int) {
+	for charInd := range r.core.Player.Chars() {
+		r.lunarCrystallizeContributor[charInd] = true
+	}
+	r.DoLCrAttack(owner)
+}
+
 func (r *Reactable) DoLCrAttack(owner int) {
 	for _, delay := range []int{1, 4, 7} {
 		r.core.Tasks.Add(func() { r.doSingleLCrAttack(owner) }, delay)
