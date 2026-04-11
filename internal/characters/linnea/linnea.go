@@ -33,7 +33,6 @@ func NewChar(s *core.Core, w *character.CharWrapper, _ info.CharacterProfile) er
 }
 
 func (c *char) Init() error {
-	c.a4()
 	c.a1Init()
 	c.a4Init()
 	c.lunarcrystallizeInit()

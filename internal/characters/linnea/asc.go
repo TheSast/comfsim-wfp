@@ -3,6 +3,7 @@ package linnea
 import (
 	"github.com/genshinsim/gcsim/pkg/core/attacks"
 	"github.com/genshinsim/gcsim/pkg/core/attributes"
+	"github.com/genshinsim/gcsim/pkg/core/combat"
 	"github.com/genshinsim/gcsim/pkg/core/event"
 	"github.com/genshinsim/gcsim/pkg/core/glog"
 	"github.com/genshinsim/gcsim/pkg/core/info"
@@ -26,35 +27,52 @@ func (c *char) a1Init() {
 		shred = 0.3
 	}
 
-func (c *char) a4Init() {
-	c.Core.Events.Subscribe(event.OnCharacterSwap, func(args ...any) bool {
-		c.a4()
+	c.Core.Events.Subscribe(event.OnTargetMoved, func(args ...any) bool {
+		target := args[0].(info.Target)
+		if target.Type() != info.TargettableEnemy {
+			return false
+		}
+
+		e := c.Core.Combat.ClosestEnemyWithinArea(
+			combat.NewCircleHitOnTarget(
+				target, nil, 1, // 0 might work?
+			),
+			func(t info.Enemy) bool { return t.Key() == target.Key() },
+		)
+
+		if e.IsWithinArea(combat.NewCircleHitOnTarget(c.Core.Combat.Player(), nil, 10)) && (c.StatusIsActive(lumiKey) || c.StatusIsActive(superLumiKey)) {
+			e.AddResistMod(info.ResistMod{
+				Base:  modifier.NewBase(a1Key, 99999), // -1 not accepted
+				Ele:   attributes.Geo,
+				Value: -shred,
+			})
+		} else {
+			e.DeleteResistMod(a1Key)
+		}
 		return false
-	}, a4Key+"-hook")
+	}, a1Key)
 }
 
-// This function will add the buff to the correct character and remove it to every other one
-func (c *char) a4() {
+func (c *char) a4Init() {
 	if c.Base.Ascension < 4 {
 		return
 	}
-	m := make([]float64, attributes.EndStatType)
-	buffed := c.Core.Player.Active()
-	if c.Core.Player.ActiveChar().Moonsign == 0 {
-		buffed = c.Index()
-	}
+	b := make([]float64, attributes.EndStatType)
 	for _, char := range c.Core.Player.Chars() {
 		char.AddStatMod(character.StatMod{
 			Base:         modifier.NewBaseWithHitlag(a4Key, -1),
 			Extra:        true,
 			AffectedStat: attributes.EM,
 			Amount: func() ([]float64, bool) {
+				buffed := c.Core.Player.Active()
+				if c.Core.Player.ActiveChar().Moonsign == 0 {
+					buffed = c.Index()
+				}
 				if char.Index() != buffed {
 					return nil, false
 				}
-				stats := c.SelectStat(true, attributes.BaseDEF, attributes.DEFP, attributes.DEF)
-				m[attributes.EM] = stats.TotalDEF() * 0.05
-				return m, true
+				b[attributes.EM] = c.TotalDef(true) * 0.05
+				return b, true
 			},
 		})
 	}
@@ -76,8 +94,7 @@ func (c *char) lunarcrystallizeInit() {
 			return false
 		}
 
-		stats := c.SelectStat(true, attributes.BaseDEF, attributes.DEFP, attributes.DEF)
-		bonus := min(stats.TotalDEF()/100.0*0.007, 0.14)
+		bonus := min(c.TotalDef(true)/100.0*0.007, 0.14)
 
 		if c.Core.Flags.LogDebug {
 			c.Core.Log.NewEvent("linnea adding lunarcrystallize base damage", glog.LogCharacterEvent, c.Index()).Write("bonus", bonus)
