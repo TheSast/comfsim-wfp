@@ -96,7 +96,7 @@ func (c *char) lumiAttack(src int) func() {
 			ActorIndex: c.Index(),
 			Abil:       lumiAttack,
 			AttackTag:  attacks.AttackTagElementalArt,
-			ICDTag:     attacks.ICDTagNone,
+			ICDTag:     attacks.ICDTagElementalArt,
 			ICDGroup:   attacks.ICDGroupDefault,
 			StrikeType: attacks.StrikeTypeDefault,
 			Element:    attributes.Geo,
