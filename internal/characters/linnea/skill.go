@@ -59,8 +59,6 @@ func (c *char) particleCB(a info.AttackCB) {
 }
 
 func (c *char) summonSuperLumi() {
-	enemies := c.Core.Combat.EnemiesWithinArea(combat.NewCircleHitOnTarget(c.Core.Combat.PrimaryTarget(), nil, 10), nil)
-	c.a1(enemies)
 	c.lumiSrc = c.Core.F
 	c.AddStatus(lumiKey, int(skillDuration[c.TalentLvlSkill()]*60), false)
 	c.AddStatus(superLumiKey, int(skillDuration[c.TalentLvlSkill()]*60), false)
@@ -69,8 +67,6 @@ func (c *char) summonSuperLumi() {
 }
 
 func (c *char) summonUltimateLumi() {
-	enemies := c.Core.Combat.EnemiesWithinArea(combat.NewCircleHitOnTarget(c.Core.Combat.PrimaryTarget(), nil, 10), nil)
-	c.a1(enemies)
 	c.lumiSrc = c.Core.F
 	ai := info.AttackInfo{
 		ActorIndex:       c.Index(),
@@ -91,14 +87,8 @@ func (c *char) summonUltimateLumi() {
 
 func (c *char) lumiAttack(src int) func() {
 	return func() {
-		// src changed, cancel these ticks
-		if c.lumiSrc != src {
-			return
-		}
-
-		if !c.StatusIsActive(lumiKey) {
-			enemies := c.Core.Combat.EnemiesWithinArea(combat.NewCircleHitOnTarget(c.Core.Combat.Player(), nil, 10), nil)
-			c.a1(enemies)
+		// src changed or lumi expired, cancel these ticks
+		if c.lumiSrc != src || !c.StatusIsActive(lumiKey) {
 			return
 		}
 
@@ -122,14 +112,8 @@ func (c *char) lumiAttack(src int) func() {
 
 func (c *char) lumiSuperAttack(src int) func() {
 	return func() {
-		// src changed, cancel these ticks
-		if c.lumiSrc != src {
-			enemies := c.Core.Combat.EnemiesWithinArea(combat.NewCircleHitOnTarget(c.Core.Combat.Player(), nil, 10), nil)
-			c.a1(enemies)
-			return
-		}
-
-		if !c.StatusIsActive(superLumiKey) {
+		// src changed or lumi expired, cancel these ticks
+		if c.lumiSrc != src || !c.StatusIsActive(lumiKey) {
 			return
 		}
 

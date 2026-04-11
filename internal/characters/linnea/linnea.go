@@ -3,7 +3,6 @@ package linnea
 import (
 	tmpl "github.com/genshinsim/gcsim/internal/template/character"
 	"github.com/genshinsim/gcsim/pkg/core"
-	"github.com/genshinsim/gcsim/pkg/core/combat"
 	"github.com/genshinsim/gcsim/pkg/core/info"
 	"github.com/genshinsim/gcsim/pkg/core/keys"
 	"github.com/genshinsim/gcsim/pkg/core/player/character"
@@ -34,9 +33,8 @@ func NewChar(s *core.Core, w *character.CharWrapper, _ info.CharacterProfile) er
 }
 
 func (c *char) Init() error {
-	enemies := c.Core.Combat.EnemiesWithinArea(combat.NewCircleHitOnTarget(c.Core.Combat.PrimaryTarget(), nil, 10), nil)
-	c.a1(enemies)
 	c.a4()
+	c.a1Init()
 	c.a4Init()
 	c.lunarcrystallizeInit()
 	c.c1Init()

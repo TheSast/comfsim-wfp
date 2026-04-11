@@ -17,27 +17,14 @@ const (
 	lunarcrystallizeBonusKey = "linnea-lcr-bonus"
 )
 
-// This function will add the debuff to the enemy or clear it depending on Lumi's presence
-func (c *char) a1(enemies []info.Enemy) {
+func (c *char) a1Init() {
 	if c.Base.Ascension < 1 {
 		return
 	}
-	for _, e := range enemies {
-		if !c.StatusIsActive(lumiKey) && !c.StatusIsActive(superLumiKey) {
-			e.DeleteResistMod(a1Key)
-			continue
-		}
-		shred := 0.15
-		if c.getMoonsignLevel() >= 2 {
-			shred = 0.3
-		}
-		e.AddResistMod(info.ResistMod{
-			Base:  modifier.NewBaseWithHitlag(a1Key, 99999), // -1 not accepted
-			Ele:   attributes.Geo,
-			Value: -shred,
-		})
+	shred := 0.15
+	if c.getMoonsignLevel() >= 2 {
+		shred = 0.3
 	}
-}
 
 func (c *char) a4Init() {
 	c.Core.Events.Subscribe(event.OnCharacterSwap, func(args ...any) bool {
